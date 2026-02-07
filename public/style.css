@@ -1,0 +1,41 @@
+body {
+      background-image: url('https://th.bing.com/th/id/R.55ff73c42abd4348c3525513379c8607?rik=oFffLV%2fkpIlSlw&riu=http%3a%2f%2fgetwallpapers.com%2fwallpaper%2ffull%2f0%2fc%2f2%2f726995-widescreen-windows-xp-desktop-backgrounds-1920x1200-for-samsung-galaxy.jpg&ehk=lkbUe7uuOpXO0iwEZXbYc2cDDNd1fG0pBrwcSMSGMZY%3d&risl=&pid=ImgRaw&r=0');
+      background-size: cover; /* Ensures the image covers the entire screen */
+      background-repeat: no-repeat; /* Prevents the image from repeating */
+      background-position: center; /* Centers the image */
+        font-size: 16px; /* Root font size */
+    }
+
+p {
+  font-size: 2rem; /* 2 * 16px = 32px */
+}
+
+h2, h3{
+    color: white;
+    text-shadow: 2px 2px 4px #000000;
+}
+
+table {
+    background-color: rgba(255, 255, 255, 0.8); /* White background with some transparency */
+    border-collapse: collapse; /* Ensures borders are collapsed */
+    width: 100%; /* Full width */
+}
+
+.highlight {
+    background-color: yellow; /* Highlight color */
+}
+
+#figure1 {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+    border: 2px solid #2e93ff; padding: 10px; width: 175px; text-align: center;
+}
+
+#main-heading {
+    text-align: center;
+    color: rgb(255, 0, 0);
+    padding: 10%;
+    text-shadow: 5px 5px 4px #000000;
+}

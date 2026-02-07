@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="https://unpkg.com/98.css">
+  <!-- Bootstrap -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  >
+  <style>
+    body {
+      background-image: url('Kanbara.jpg');
+      background-size: cover;
+      background-position: center;
+    }
+  </style>
+  <title>Dictionary</title>
+</head>
+<body>
+  <!-- Верхний navbar -->
+  <nav class="navbar navbar-expand-lg bg-white fixed-top shadow-sm">
+    <div class="container-fluid px-4">
+      <h3>English–Japanese Dictionary</h3>
+      <p id="user"></p>
+
+      <button onclick="goProfile()">Profile</button>
+      <button onclick="logout()">Logout</button>
+
+      </div>
+  </nav>
+
+  <br><br><br><br>
+
+  <div class="row g-3">
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="window" display="flex" justify-content="center" style="margin-left: 40px; width: auto; height: auto;">
+    <div class="title-bar">
+      <div class="title-bar-text">Recently added words</div>
+    </div>
+    <div class="window-body">
+        <h2>New</h2>
+          <ul id="words"></ul>
+    </div>
+    </div>
+    </div>
+
+  <div class="col-12 col-md-6 col-lg-4">
+  <div display="flex" align="center" justify-content="center">
+  <div class="window" display="flex" align="center" justify-content="center" style="width: 500px; height: 130px;">
+    <div class="title-bar">
+      <div class="title-bar-text">Search box</div>
+    </div>
+    <div class="window-body">
+  <h2>Search</h2>
+<input id="search" style="width: 250px;" placeholder="Search word..." />
+<button onclick="searchWords()">Search</button>
+  </div>
+</div>
+
+<br><br>
+
+  <div class="window" align="center" style="width: 500px; height: 130px;">
+    <div class="title-bar">
+      <div class="title-bar-text">Add word</div>
+    </div>
+    <div class="window-body">
+  <h3>Add word</h3>
+
+  <input id="english" placeholder="English" />
+  <input id="japanese" placeholder="Japanese" />
+  <input id="reading" placeholder="Reading" />
+  <input id="meaning" placeholder="Meaning" />
+  <button onclick="addWord()">Add</button>
+  </div>
+
+  </div>
+</div>
+</div>
+
+<div class="col-12 col-md-6 col-lg-4">
+      <div class="window" display="flex" align="center" justify-content="center" style="margin-left: 80px; width: 280px; height: auto;">
+    <div class="title-bar">
+      <div class="title-bar-text">Recently added words</div>
+    </div>
+    <div class="window-body">
+        <h2>About</h2>
+          <h5>
+            This is a powerful Japanese-English dictionary. It lets you find words, kanji, example sentences and more quickly and easily. Our goal is to build a new kind of dictionary that doesn't just let you look up single words or kanji, but rather helps you understand any Japanese text.
+          </h5>
+    </div>
+    </div>
+    </div>
+
+</div>
+
+
+  <script>
+  // ✅ Глобально
+  const token = localStorage.getItem('token');
+
+  if (!token) {
+    window.location.href = '/login.html';
+  }
+
+  async function loadProfile() {
+    const res = await fetch('/api/users/profile', {
+      headers: {
+        Authorization: 'Bearer ' + token
+      }
+    });
+
+    if (!res.ok) {
+      logout();
+      return;
+    }
+
+    const user = await res.json();
+    document.getElementById('user').innerText =
+      `Logged in as ${user.username} (${user.email})`;
+  }
+
+  function goProfile() {
+    window.location.href = '/profile.html';
+  }
+
+  function logout() {
+    localStorage.removeItem('token');
+    window.location.href = '/login.html';
+  }
+
+  async function addWord() {
+    const body = {
+      english: document.getElementById('english').value,
+      japanese: document.getElementById('japanese').value,
+      reading: document.getElementById('reading').value,
+      meaning: document.getElementById('meaning').value
+    };
+
+    const res = await fetch('/api/words', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + token
+      },
+      body: JSON.stringify(body)
+    });
+
+    if (res.ok) {
+      loadWords();
+    } else {
+      const err = await res.json();
+      alert(err.message || 'Failed to add word');
+    }
+  }
+
+  async function loadWords() {
+  const res = await fetch('/api/words');
+  const words = await res.json();
+  renderWords(words);
+}
+
+function renderWords(words) {
+  const list = document.getElementById('words');
+  list.innerHTML = '';
+
+  if (!Array.isArray(words)) {
+    list.innerHTML = '<li>Error loading words</li>';
+    return;
+  }
+
+  if (words.length === 0) {
+    list.innerHTML = '<li>No words found</li>';
+    return;
+  }
+
+  words = words.slice(0, 13); // Show only 13 recent words
+
+  words.forEach(w => {
+    const li = document.createElement('li');
+    li.innerText =
+      `${w.japanese} — ${w.reading} (${w.english || '-'}) | added by ${w.createdBy.username}`;
+    list.appendChild(li);
+  });
+}
+
+
+
+  function searchWords() {
+    const query = document.getElementById('search').value.trim();
+
+    if (!query) return;
+
+    window.location.href = `/search.html?q=${encodeURIComponent(query)}`;
+  }
+
+
+  loadWords();
+  loadProfile();
+</script>
+</body>
+</html>
